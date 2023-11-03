@@ -2,7 +2,6 @@ package com.eronalves.tictactoe
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +18,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.eronalves.tictactoe.ui.components.GlobalStateViewModel
 import com.eronalves.tictactoe.ui.components.StartScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 enum class TicTaeToeRoutes() {
     Start, Game, GameHistory
@@ -47,6 +48,7 @@ private fun TicTacToeTopBar(modifier: Modifier = Modifier) {
 @Composable
 fun AppHostScreen(
     navHostController: NavHostController = rememberNavController(),
+    viewModel: GlobalStateViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     Scaffold(topBar = {
@@ -59,8 +61,16 @@ fun AppHostScreen(
         ) {
             composable(TicTaeToeRoutes.Start.name) {
                 StartScreen(
-                    onLoadHistory = {},
-                    onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize -> })
+                    onLoadHistory = { navHostController.navigate(TicTaeToeRoutes.GameHistory.name) },
+                    onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize ->
+                        viewModel.startGame(
+                            player1Name,
+                            player2Name,
+                            isRobotEnabled,
+                            selectedTableSize
+                        )
+                        navHostController.navigate(TicTaeToeRoutes.Game.name)
+                    })
             }
             composable(TicTaeToeRoutes.Game.name) {}
             composable(TicTaeToeRoutes.GameHistory.name) {}
