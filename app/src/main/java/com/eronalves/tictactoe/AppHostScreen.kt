@@ -13,6 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +31,10 @@ import androidx.navigation.compose.rememberNavController
 import com.eronalves.tictactoe.ui.components.viewmodel.GlobalStateViewModel
 import com.eronalves.tictactoe.ui.components.StartScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.eronalves.tictactoe.data.AppDatabase
+import com.eronalves.tictactoe.data.LastFirstPlayer
 import com.eronalves.tictactoe.ui.components.GameScreen
+import kotlinx.coroutines.launch
 
 enum class TicTaeToeRoutes() {
     Start, Game, GameHistory
@@ -52,9 +62,11 @@ private fun TicTacToeTopBar(modifier: Modifier = Modifier) {
 @Composable
 fun AppHostScreen(
     navHostController: NavHostController = rememberNavController(),
-    viewModel: GlobalStateViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    viewModel: GlobalStateViewModel,
+    modifier: Modifier = Modifier,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(topBar = {
         TicTacToeTopBar()
     }, modifier = modifier) {
@@ -63,9 +75,14 @@ fun AppHostScreen(
             startDestination = TicTaeToeRoutes.Start.name,
             modifier = Modifier.padding(it)
         ) {
+
             composable(TicTaeToeRoutes.Start.name) {
                 StartScreen(
+                    persistedFirstName = uiState.player1Name ?: "",
                     onLoadHistory = { navHostController.navigate(TicTaeToeRoutes.GameHistory.name) },
+                    onSaveLastPlayer1Name = { name ->
+                        viewModel.saveLastFirstPlayerName(name)
+                    },
                     onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize ->
                         viewModel.startGame(
                             player1Name,
@@ -96,15 +113,3 @@ fun AppHostScreen(
         }
     }
 }
-
-
-@Composable
-@Preview(showBackground = true)
-fun AppHostScreenPreview() {
-    AppHostScreen(
-        modifier = Modifier
-            .fillMaxHeight()
-            .wrapContentSize()
-    )
-}
-

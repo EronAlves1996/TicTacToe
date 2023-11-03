@@ -1,10 +1,15 @@
 package com.eronalves.tictactoe.ui.components.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.eronalves.tictactoe.data.AppDatabase
+import com.eronalves.tictactoe.data.LastFirstPlayer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Arrays
 import java.util.stream.Collectors
 import java.util.stream.IntStream
@@ -32,9 +37,19 @@ data class GameState(
 )
 
 
-class GlobalStateViewModel : ViewModel() {
+class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
     private val _uiState = MutableStateFlow(GameState())
+    private val lastFirstPlayerDao = db.lastFirstPlayerDao()
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val lastFirstPlayer = lastFirstPlayerDao.checkIfHaveAFirstPlayer()
+            if (lastFirstPlayer != null) _uiState.update {
+                it.copy(player1Name = lastFirstPlayer.name)
+            }
+        }
+    }
 
     fun startGame(
         player1Name: String,
@@ -52,6 +67,17 @@ class GlobalStateViewModel : ViewModel() {
                 playerTime = PlayerTime.Player1,
                 winner = Winner.NoWinner
             )
+        }
+    }
+
+    fun saveLastFirstPlayerName(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val lastFirstPlayer = lastFirstPlayerDao.checkIfHaveAFirstPlayer()
+            if (lastFirstPlayer == null) {
+                lastFirstPlayerDao.insert(LastFirstPlayer(1, name))
+                return@launch
+            }
+            lastFirstPlayerDao.updateLastFirstPlayer(lastFirstPlayer.copy(name = name))
         }
     }
 

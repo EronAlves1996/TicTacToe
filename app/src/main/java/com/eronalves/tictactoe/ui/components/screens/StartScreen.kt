@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,6 +36,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.eronalves.tictactoe.R
+import com.eronalves.tictactoe.data.LastFirstPlayer
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
@@ -76,8 +74,10 @@ fun NormalizedSegmentedControl(
 @Composable
 fun StartScreen(
     onStartGame: (player1Name: String, player2Name: String, isRobotEnabled: Boolean, selectedTableSize: Int) -> Unit,
+    onSaveLastPlayer1Name: (String) -> Unit,
     onLoadHistory: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    persistedFirstName: String
 ) {
     val gameTypes = listOf(
         stringResource(R.string.game_type_against_player),
@@ -85,7 +85,7 @@ fun StartScreen(
     )
     val robotPlayerName = stringResource(R.string.robot_player_name)
     var gameTypeIndex by remember { mutableIntStateOf(0) }
-    var player1Name by remember { mutableStateOf("") }
+    var player1Name by remember { mutableStateOf(persistedFirstName) }
     var player2Name by remember { mutableStateOf("") }
     var player2IsEnabled by remember { mutableStateOf(true) }
     var selectedTableSize by remember { mutableStateOf(3) }
@@ -127,7 +127,10 @@ fun StartScreen(
             FormSection(title = R.string.player_name_input_section_label) {
                 TextField(
                     value = player1Name,
-                    onValueChange = { player1Name = it },
+                    onValueChange = {
+                        player1Name = it
+                        onSaveLastPlayer1Name(it)
+                    },
                     label = { Text(stringResource(R.string.player_1_name_input)) },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = when (player2IsEnabled) {
@@ -176,16 +179,4 @@ fun StartScreen(
             secondaryButtonOnClick = onLoadHistory
         )
     }
-}
-
-@Preview
-@Composable
-fun StartScreenPreview() {
-    StartScreen(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(),
-        onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize -> },
-        onLoadHistory = {}
-    )
 }

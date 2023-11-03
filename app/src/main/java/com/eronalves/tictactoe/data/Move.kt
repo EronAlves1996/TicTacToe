@@ -8,7 +8,7 @@ import androidx.room.Relation
 
 @Entity
 data class Move(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "t_row") val row: Int?,
     @ColumnInfo(name = "t_column") val column: Int?,
     @ColumnInfo(name = "player_id") val playerId: Int?,
