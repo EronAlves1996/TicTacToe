@@ -146,42 +146,20 @@ fun StartScreen(
             }
         }
         Spacer(modifier = Modifier.height(100.dp))
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = {
-                    onStartGame(
-                        player1Name,
-                        player2Name,
-                        gameTypeIndex == 1,
-                        selectedTableSize
-                    )
-                },
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                enabled = !player1Name.isEmpty() && !player2Name.isEmpty()
-            ) {
-                Text(
-                    stringResource(R.string.start_game_button),
-                    style = MaterialTheme.typography.titleLarge
+        BottomControls(
+            primaryButtonLabel = R.string.start_game_button,
+            primaryButtonOnClick = {
+                onStartGame(
+                    player1Name,
+                    player2Name,
+                    gameTypeIndex == 1,
+                    selectedTableSize
                 )
-            }
-            Button(
-                onClick = onLoadHistory,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(
-                    stringResource(R.string.game_history_button),
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        }
+            },
+            primaryButtonEnabled = !player1Name.isEmpty() && !player2Name.isEmpty(),
+            secondaryButtonLabel = R.string.game_history_button,
+            secondaryButtonOnClick = onLoadHistory
+        )
     }
 }
 
