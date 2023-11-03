@@ -1,8 +1,89 @@
 package com.eronalves.tictactoe.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
+import com.eronalves.tictactoe.R
+import com.eronalves.tictactoe.ui.components.viewmodel.GlobalStateViewModel
+import com.eronalves.tictactoe.ui.components.viewmodel.PlayerTime
+
 
 @Composable
-fun GameScreen() {
+fun GameScreen(
+    viewModel: GlobalStateViewModel, modifier: Modifier = Modifier
+) {
+    val globalUiState by viewModel.uiState.collectAsState()
 
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+        ) {
+            Text(text = "Vez do Jogador")
+            Text(
+                text = if (globalUiState.playerTime == PlayerTime.Player1) {
+                    globalUiState.player1Name!!
+                } else {
+                    globalUiState.player2Name!!
+                }
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .width(400.dp)
+                .height(400.dp)
+        ) {
+            for (row in globalUiState.gameTable!!) {
+                Row(Modifier.weight(0.5F, fill = true)) {
+                    for (cell in row) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            shape = RectangleShape,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier
+                                .weight(1.0F, fill = true)
+                                .fillMaxHeight()
+                        ) {
+                            Text(cell.name)
+                        }
+                    }
+                }
+            }
+        }
+        BottomControls(primaryButtonLabel = R.string.restart_game,
+            primaryButtonOnClick = { /*TODO*/ },
+            primaryButtonEnabled = true,
+            secondaryButtonLabel = R.string.new_game,
+            secondaryButtonOnClick = { /*TODO*/ })
+    }
 }

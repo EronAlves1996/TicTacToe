@@ -11,4 +11,6 @@
     <string name="start_game_button">Começar  Partida</string>
     <string name="game_history_button">Histórico de Partidas</string>
     <string name="robot_player_name">Robô</string>
+    <string name="restart_game">Recomeçar</string>
+    <string name="new_game">Novo Jogo</string>
 </resources>

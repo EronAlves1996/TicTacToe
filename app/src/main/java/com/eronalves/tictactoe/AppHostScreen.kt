@@ -14,13 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.eronalves.tictactoe.ui.components.GlobalStateViewModel
+import com.eronalves.tictactoe.ui.components.viewmodel.GlobalStateViewModel
 import com.eronalves.tictactoe.ui.components.StartScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.eronalves.tictactoe.ui.components.GameScreen
 
 enum class TicTaeToeRoutes() {
     Start, Game, GameHistory
@@ -70,9 +72,20 @@ fun AppHostScreen(
                             selectedTableSize
                         )
                         navHostController.navigate(TicTaeToeRoutes.Game.name)
-                    })
+                    },
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxHeight()
+                )
+
             }
-            composable(TicTaeToeRoutes.Game.name) {}
+            composable(TicTaeToeRoutes.Game.name) {
+                GameScreen(
+                    viewModel, modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxHeight()
+                )
+            }
             composable(TicTaeToeRoutes.GameHistory.name) {}
         }
     }
