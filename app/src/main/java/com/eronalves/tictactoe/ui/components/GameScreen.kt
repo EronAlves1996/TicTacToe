@@ -78,13 +78,19 @@ fun GameScreen(
                 .fillMaxWidth()
                 .padding(top = 20.dp)
         ) {
-            Text(text = "Vez do Jogador")
+            Text(text = "Vez do Jogador", style = MaterialTheme.typography.titleLarge)
             Text(
                 text = if (globalUiState.playerTime == PlayerTime.Player1) {
                     globalUiState.player1Name!!
                 } else {
                     globalUiState.player2Name!!
-                }
+                },
+                color = if (globalUiState.playerTime == PlayerTime.Player1) {
+                    MaterialTheme.colorScheme.player1Color
+                } else {
+                    MaterialTheme.colorScheme.player2Color
+                },
+                style = MaterialTheme.typography.titleLarge,
             )
         }
         Column(

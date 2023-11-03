@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -103,7 +104,8 @@ fun StartScreen(
                 }
             ),
             contentDescription = stringResource(R.string.app_logo_description),
-            Modifier.size(150.dp)
+            Modifier
+                .size(200.dp, 100.dp)
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             FormSection(title = R.string.game_type_label) {

@@ -77,6 +77,7 @@ fun AppHostScreen(
                     },
                     modifier = Modifier
                         .fillMaxHeight()
+                        .padding(10.dp)
                         .verticalScroll(rememberScrollState())
                 )
 
