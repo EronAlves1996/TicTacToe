@@ -31,7 +31,7 @@ fun BottomControls(
         Button(
             onClick = primaryButtonOnClick,
             modifier = Modifier
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(10.dp),
             enabled = primaryButtonEnabled

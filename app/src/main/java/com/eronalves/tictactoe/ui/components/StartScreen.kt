@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -45,14 +47,16 @@ fun FormSection(
     modifier: Modifier = Modifier,
     children: @Composable (() -> Unit) = {},
 ) {
-    Text(
-        text = stringResource(title),
-        fontWeight = FontWeight.Bold,
-        fontSize = TextUnit(20.0F, TextUnitType.Sp),
-        textAlign = TextAlign.Center
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-    children()
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = stringResource(title),
+            fontWeight = FontWeight.Bold,
+            fontSize = TextUnit(20.0F, TextUnitType.Sp),
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        children()
+    }
 }
 
 @Composable
@@ -88,7 +92,7 @@ fun StartScreen(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
             painter = painterResource(
@@ -99,7 +103,7 @@ fun StartScreen(
                 }
             ),
             contentDescription = stringResource(R.string.app_logo_description),
-            Modifier.size(200.dp)
+            Modifier.size(150.dp)
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             FormSection(title = R.string.game_type_label) {
@@ -119,18 +123,33 @@ fun StartScreen(
             }
             Spacer(Modifier.height(20.dp))
             FormSection(title = R.string.player_name_input_section_label) {
-                TextField(value = player1Name,
+                TextField(
+                    value = player1Name,
                     onValueChange = { player1Name = it },
-                    label = { Text(stringResource(R.string.player_1_name_input)) })
-                TextField(value = player2Name,
+                    label = { Text(stringResource(R.string.player_1_name_input)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = when (player2IsEnabled) {
+                            true -> ImeAction.Next
+                            false -> ImeAction.Done
+                        }
+                    )
+                )
+                TextField(
+                    value = player2Name,
                     onValueChange = { player2Name = it },
                     enabled = player2IsEnabled,
-                    label = { Text(stringResource(R.string.player_2_name_input)) })
+                    label = { Text(stringResource(R.string.player_2_name_input)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
+                )
             }
         }
-        Spacer(modifier = Modifier.height(40.dp))
         FormSection(title = R.string.table_size_selection_label) {
-            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+            ) {
                 NormalizedSegmentedControl(options = IntStream
                     .range(3, 11)
                     .mapToObj { "$it x $it" }
@@ -140,7 +159,6 @@ fun StartScreen(
                     })
             }
         }
-        Spacer(modifier = Modifier.height(100.dp))
         BottomControls(
             primaryButtonLabel = R.string.start_game_button,
             primaryButtonOnClick = {

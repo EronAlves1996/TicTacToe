@@ -22,9 +22,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.eronalves.tictactoe.R
+import com.eronalves.tictactoe.ui.components.viewmodel.CellStates
 import com.eronalves.tictactoe.ui.components.viewmodel.GlobalStateViewModel
 import com.eronalves.tictactoe.ui.components.viewmodel.PlayerTime
+import com.eronalves.tictactoe.ui.theme.player1Color
+import com.eronalves.tictactoe.ui.theme.player2Color
 
+data class CellState(val state: String, val color: Color)
+
+@Composable
+fun Cell(state: CellStates, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        enabled = state == CellStates.Empty,
+        shape = RectangleShape,
+        border = BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.onSecondaryContainer
+        ),
+        modifier = modifier
+    ) {
+        val cellState = when (state) {
+            CellStates.Empty -> CellState("", Color.Transparent)
+            else -> CellState(
+                state.name, when (state) {
+                    CellStates.X -> MaterialTheme.colorScheme.player1Color
+                    else -> MaterialTheme.colorScheme.player2Color
+                }
+            )
+        }
+
+        Text(
+            text = cellState.state,
+            color = cellState.color,
+            style = MaterialTheme.typography.displayMedium
+        )
+    }
+}
 
 @Composable
 fun GameScreen(
@@ -59,23 +94,19 @@ fun GameScreen(
                 .width(400.dp)
                 .height(400.dp)
         ) {
-            for (row in globalUiState.gameTable!!) {
+            for (i in globalUiState.gameTable!!.indices) {
                 Row(Modifier.weight(0.5F, fill = true)) {
-                    for (cell in row) {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                            shape = RectangleShape,
-                            border = BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.onSecondaryContainer
-                            ),
+                    for (j in globalUiState.gameTable!!.get(i).indices) {
+                        val cell = globalUiState.gameTable!![i][j]
+                        Cell(
+                            state = cell,
+                            onClick = {
+                                viewModel.makePlay(i, j)
+                            },
                             modifier = Modifier
                                 .weight(1.0F, fill = true)
                                 .fillMaxHeight()
-                        ) {
-                            Text(cell.name)
-                        }
+                        )
                     }
                 }
             }

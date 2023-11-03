@@ -45,15 +45,14 @@ class GlobalStateViewModel : ViewModel() {
         }
     }
 
-    fun makePlay(playerPlay: PlayerTime, x: Int, y: Int) {
-        val cell = associatePlayerToCellSymbol(playerPlay)
+    fun makePlay(x: Int, y: Int) {
         _uiState.update {
-            it?.gameTable?.get(x)?.set(y, cell)
+            it?.gameTable?.get(x)?.set(y, associatePlayerToCellSymbol(it.playerTime))
             val table = it.gameTable
-            
+
             it.copy(
                 gameTable = table,
-                playerTime = swapPlaying(playerPlay)
+                playerTime = swapPlaying(it.playerTime)
             )
         }
     }
