@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.room.ColumnInfo
 import com.eronalves.tictactoe.R
 import com.eronalves.tictactoe.ui.components.viewmodel.CellStates
 import com.eronalves.tictactoe.ui.components.viewmodel.GameState
@@ -42,6 +51,7 @@ fun Cell(
     hasWinner: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle,
     isRobotEnabled: Boolean,
     isRobotTime: Boolean
 ) {
@@ -53,7 +63,8 @@ fun Cell(
         border = BorderStroke(
             1.dp, MaterialTheme.colorScheme.onSecondaryContainer
         ),
-        modifier = modifier
+        modifier = modifier,
+        contentPadding = PaddingValues(0.dp)
     ) {
         val cellState = when (state) {
             CellStates.Empty -> CellState("", Color.Transparent)
@@ -64,13 +75,106 @@ fun Cell(
                 }
             )
         }
-
         Text(
             text = cellState.state,
             color = cellState.color,
-            style = MaterialTheme.typography.displayMedium
+            style = textStyle,
+            overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+@Preview
+@Composable
+fun CellPreview() {
+    val weight = 1.0F
+    val textStyle =
+        MaterialTheme.typography.bodySmall
+    Column {
+        Row {
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+            Cell(
+                state = CellStates.O,
+                onClick = { /*TODO*/ },
+                textStyle = textStyle,
+                isRobotEnabled = false,
+                isRobotTime = false,
+                modifier = Modifier.weight(weight)
+            )
+        }
+    }
+
 }
 
 data class AgreggateDataGameState(
@@ -190,6 +294,10 @@ fun GameScreen(
                 Row(Modifier.weight(0.5F, fill = true)) {
                     for (j in globalUiState.gameTable!!.get(i).indices) {
                         val cell = globalUiState.gameTable!![i][j]
+                        val cellFontSize = MaterialTheme.typography.displayMedium.fontSize
+                        val decRate = 1 - ((0.1) * (globalUiState.tableSize - 3) / 0.9)
+                        val finalFontSize = cellFontSize * decRate
+
                         Cell(
                             state = cell,
                             onClick = {
@@ -198,6 +306,11 @@ fun GameScreen(
                             isRobotEnabled = globalUiState.isRobotEnabled,
                             isRobotTime = globalUiState.playerTime == PlayerTime.Player2,
                             hasWinner = globalUiState.winner != Winner.NoWinner,
+                            textStyle = when (globalUiState.tableSize) {
+                                3, 4, 5 -> MaterialTheme.typography.displayLarge
+                                6, 7, 8 -> MaterialTheme.typography.displaySmall
+                                else -> MaterialTheme.typography.bodyMedium
+                            },
                             modifier = Modifier
                                 .weight(1.0F, fill = true)
                                 .fillMaxHeight()
