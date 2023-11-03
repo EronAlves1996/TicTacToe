@@ -3,6 +3,7 @@ package com.eronalves.tictactoe.ui.components
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -41,16 +42,18 @@ fun SegmentedControl(
     items: List<String>,
     defaultSelectedItemIndex: Int = 0,
     useFixedWidth: Boolean = false,
+    useWeightedWidth: Boolean = false,
     itemWidth: Dp = 120.dp,
     cornerRadius: Int = 10,
     color: Color = MaterialTheme.colorScheme.primary,
     contrastColor: Color = MaterialTheme.colorScheme.onPrimary,
-    onItemSelection: (selectedItemIndex: Int) -> Unit
+    onItemSelection: (selectedItemIndex: Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val selectedIndex = remember { mutableStateOf(defaultSelectedItemIndex) }
 
     Row(
-        modifier = Modifier
+        modifier = modifier,
     ) {
         items.forEachIndexed { index, item ->
             Button(

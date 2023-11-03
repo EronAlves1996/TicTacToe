@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Jogo da velha</string>
+    <string name="app_logo_description">Logotipo Jogo da Velha</string>
+    <string name="game_type_label">Tipo de Jogo</string>
+    <string name="game_type_against_player">vsJogador</string>
+    <string name="game_type_against_bot">vsBot</string>
+    <string name="player_name_input_section_label">Nome dos Jogadores</string>
+    <string name="player_1_name_input">Jogador 1</string>
+    <string name="player_2_name_input">Jogador 2</string>
+    <string name="table_size_selection_label">Tamanho do Tabuleiro</string>
+    <string name="start_game_button">Começar  Partida</string>
+    <string name="game_history_button">Histórico de Partidas</string>
 </resources>
