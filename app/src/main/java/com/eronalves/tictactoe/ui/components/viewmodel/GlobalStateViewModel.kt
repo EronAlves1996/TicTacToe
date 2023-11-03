@@ -1,10 +1,16 @@
 package com.eronalves.tictactoe.ui.components.viewmodel
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Arrays
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
 enum class CellStates {
     Empty, X, O
@@ -63,7 +69,23 @@ class GlobalStateViewModel : ViewModel() {
                 winner = hasWinner
             )
         }
+    }
 
+    suspend fun makeRobotPlay() {
+        uiState.collect { state ->
+            val table = state.gameTable
+
+            val emptyIndices = IntStream.range(0, table!!.size).mapToObj { i -> Pair(i, null) }
+                .flatMap { i ->
+                    IntStream.range(0, table[i.first].size).mapToObj { Pair(i.first, it) }
+                }.filter { table[it.first][it.second] == CellStates.Empty }
+                .collect(Collectors.toList())
+
+            val robotPlaying = emptyIndices[(0 until emptyIndices.size).random()]
+
+            delay(1000)
+            makePlay(robotPlaying.first, robotPlaying.second)
+        }
     }
 
     private fun associatePlayerToCellSymbol(player: PlayerTime): CellStates {
