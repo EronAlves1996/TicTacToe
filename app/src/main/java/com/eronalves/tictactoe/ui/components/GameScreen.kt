@@ -146,7 +146,8 @@ fun GameStateIndicator(globalUiState: GameState, modifier: Modifier = Modifier) 
 
 @Composable
 fun GameScreen(
-    viewModel: GlobalStateViewModel, modifier: Modifier = Modifier
+    viewModel: GlobalStateViewModel, modifier: Modifier = Modifier,
+    onNewGame: () -> Unit
 ) {
     val globalUiState by viewModel.uiState.collectAsState()
     val openRobotPlayingTime =
@@ -164,10 +165,10 @@ fun GameScreen(
             AlertDialog(onDismissRequest = { /*TODO*/ }, confirmButton = { /*TODO*/ }, text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
-                        text = "É a vez do robô fazer sua jogada",
+                        text = stringResource(R.string.robot_time_playing_popup_title),
                         style = MaterialTheme.typography.titleLarge
                     )
-                    Text(text = "O robô está analisando...")
+                    Text(text = stringResource(R.string.robot_time_playing_popup_content))
                 }
             })
         }
@@ -205,10 +206,23 @@ fun GameScreen(
                 }
             }
         }
-        BottomControls(primaryButtonLabel = R.string.restart_game,
-            primaryButtonOnClick = { /*TODO*/ },
+        BottomControls(
+            primaryButtonLabel = R.string.restart_game,
+            primaryButtonOnClick = {
+                globalUiState.player1Name?.let {
+                    globalUiState.player2Name?.let { it1 ->
+                        viewModel.startGame(
+                            it,
+                            it1,
+                            globalUiState.isRobotEnabled,
+                            globalUiState.tableSize
+                        )
+                    }
+                }
+            },
             primaryButtonEnabled = true,
             secondaryButtonLabel = R.string.new_game,
-            secondaryButtonOnClick = { /*TODO*/ })
+            secondaryButtonOnClick = onNewGame
+        )
     }
 }

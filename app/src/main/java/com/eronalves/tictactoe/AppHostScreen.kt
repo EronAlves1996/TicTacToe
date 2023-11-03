@@ -86,7 +86,10 @@ fun AppHostScreen(
                 GameScreen(
                     viewModel, modifier = Modifier
                         .padding(10.dp)
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
+                    onNewGame = {
+                        navHostController.popBackStack(TicTaeToeRoutes.Start.name, false)
+                    }
                 )
             }
             composable(TicTaeToeRoutes.GameHistory.name) {}

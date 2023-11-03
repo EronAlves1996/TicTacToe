@@ -16,4 +16,6 @@
     <string name="player_time">Vez do Jogador</string>
     <string name="its_a_match">Deu Velha!!!</string>
     <string name="has_winner">E o vencedor é</string>
+    <string name="robot_time_playing_popup_title">É a vez do robô fazer sua jogada</string>
+    <string name="robot_time_playing_popup_content">O robô está analisando...</string>
 </resources>

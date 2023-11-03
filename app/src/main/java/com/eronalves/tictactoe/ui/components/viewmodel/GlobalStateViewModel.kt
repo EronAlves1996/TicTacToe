@@ -1,8 +1,5 @@
 package com.eronalves.tictactoe.ui.components.viewmodel
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +49,8 @@ class GlobalStateViewModel : ViewModel() {
                 isRobotEnabled = isRobotEnabled,
                 tableSize = tableSize,
                 gameTable = Array(tableSize) { Array(tableSize) { CellStates.Empty } },
-                playerTime = PlayerTime.Player1
+                playerTime = PlayerTime.Player1,
+                winner = Winner.NoWinner
             )
         }
     }
