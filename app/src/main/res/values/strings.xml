@@ -10,4 +10,5 @@
     <string name="table_size_selection_label">Tamanho do Tabuleiro</string>
     <string name="start_game_button">Começar  Partida</string>
     <string name="game_history_button">Histórico de Partidas</string>
+    <string name="robot_player_name">Robô</string>
 </resources>

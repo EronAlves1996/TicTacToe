@@ -23,6 +23,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -54,10 +59,12 @@ fun FormSection(
 }
 
 @Composable
-fun NormalizedSegmentedControl(options: List<String>, modifier: Modifier = Modifier) {
+fun NormalizedSegmentedControl(
+    options: List<String>, onItemSelection: (Int) -> Unit, modifier: Modifier = Modifier
+) {
     SegmentedControl(
         items = options,
-        onItemSelection = {},
+        onItemSelection = onItemSelection,
         color = MaterialTheme.colorScheme.secondaryContainer,
         contrastColor = MaterialTheme.colorScheme.onSecondaryContainer,
     )
@@ -65,7 +72,22 @@ fun NormalizedSegmentedControl(options: List<String>, modifier: Modifier = Modif
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartScreen(modifier: Modifier = Modifier) {
+fun StartScreen(
+    onStartGame: (player1Name: String, player2Name: String, isRobotEnabled: Boolean, selectedTableSize: Int) -> Unit,
+    onLoadHistory: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val gameTypes = listOf(
+        stringResource(R.string.game_type_against_player),
+        stringResource(R.string.game_type_against_bot)
+    )
+    val robotPlayerName = stringResource(R.string.robot_player_name)
+    var gameTypeIndex by remember { mutableIntStateOf(0) }
+    var player1Name by remember { mutableStateOf("") }
+    var player2Name by remember { mutableStateOf("") }
+    var player2IsEnabled by remember { mutableStateOf(true) }
+    var selectedTableSize by remember { mutableStateOf(3) }
+
     Column(
         modifier = modifier
             .padding(10.dp)
@@ -86,30 +108,41 @@ fun StartScreen(modifier: Modifier = Modifier) {
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             FormSection(title = R.string.game_type_label) {
-                NormalizedSegmentedControl(
-                    options = listOf(
-                        stringResource(R.string.game_type_against_player),
-                        stringResource(R.string.game_type_against_bot)
-                    )
-                )
+                NormalizedSegmentedControl(options = gameTypes,
+                    onItemSelection = {
+                        gameTypeIndex = it
+                        if (it == 1) {
+                            player2IsEnabled = false
+                            player2Name = robotPlayerName
+                            return@NormalizedSegmentedControl
+                        }
+
+                        player2IsEnabled = true
+                        player2Name = ""
+
+                    })
             }
             Spacer(Modifier.height(20.dp))
             FormSection(title = R.string.player_name_input_section_label) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
+                TextField(value = player1Name,
+                    onValueChange = { player1Name = it },
                     label = { Text(stringResource(R.string.player_1_name_input)) })
-                TextField(
-                    value = "",
-                    onValueChange = {},
+                TextField(value = player2Name,
+                    onValueChange = { player2Name = it },
+                    enabled = player2IsEnabled,
                     label = { Text(stringResource(R.string.player_2_name_input)) })
             }
         }
         Spacer(modifier = Modifier.height(40.dp))
         FormSection(title = R.string.table_size_selection_label) {
             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                NormalizedSegmentedControl(options = IntStream.range(3, 11).mapToObj { "$it x $it" }
-                    .collect(Collectors.toList()))
+                NormalizedSegmentedControl(options = IntStream
+                    .range(3, 11)
+                    .mapToObj { "$it x $it" }
+                    .collect(Collectors.toList()),
+                    onItemSelection = {
+                        selectedTableSize = it + 3
+                    })
             }
         }
         Spacer(modifier = Modifier.height(100.dp))
@@ -117,11 +150,19 @@ fun StartScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onStartGame(
+                        player1Name,
+                        player2Name,
+                        gameTypeIndex == 1,
+                        selectedTableSize
+                    )
+                },
                 modifier = Modifier
                     .padding(bottom = 10.dp)
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(10.dp),
+                enabled = !player1Name.isEmpty() && !player2Name.isEmpty()
             ) {
                 Text(
                     stringResource(R.string.start_game_button),
@@ -129,7 +170,7 @@ fun StartScreen(modifier: Modifier = Modifier) {
                 )
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = onLoadHistory,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp)
@@ -150,6 +191,8 @@ fun StartScreenPreview() {
     StartScreen(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentSize()
+            .wrapContentSize(),
+        onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize -> },
+        onLoadHistory = {}
     )
 }

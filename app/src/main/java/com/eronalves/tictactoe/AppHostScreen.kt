@@ -58,7 +58,9 @@ fun AppHostScreen(
             modifier = Modifier.padding(it)
         ) {
             composable(TicTaeToeRoutes.Start.name) {
-                StartScreen()
+                StartScreen(
+                    onLoadHistory = {},
+                    onStartGame = { player1Name, player2Name, isRobotEnabled, selectedTableSize -> })
             }
             composable(TicTaeToeRoutes.Game.name) {}
             composable(TicTaeToeRoutes.GameHistory.name) {}
@@ -70,8 +72,10 @@ fun AppHostScreen(
 @Composable
 @Preview(showBackground = true)
 fun AppHostScreenPreview() {
-    AppHostScreen(modifier = Modifier
-        .fillMaxHeight()
-        .wrapContentSize())
+    AppHostScreen(
+        modifier = Modifier
+            .fillMaxHeight()
+            .wrapContentSize()
+    )
 }
 
