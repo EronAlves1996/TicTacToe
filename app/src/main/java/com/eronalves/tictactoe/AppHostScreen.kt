@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eronalves.tictactoe.data.AppDatabase
 import com.eronalves.tictactoe.data.LastFirstPlayer
 import com.eronalves.tictactoe.ui.components.GameScreen
+import com.eronalves.tictactoe.ui.components.viewmodel.Winner
 import kotlinx.coroutines.launch
 
 enum class TicTaeToeRoutes() {
@@ -75,7 +76,6 @@ fun AppHostScreen(
             startDestination = TicTaeToeRoutes.Start.name,
             modifier = Modifier.padding(it)
         ) {
-
             composable(TicTaeToeRoutes.Start.name) {
                 StartScreen(
                     persistedFirstName = uiState.player1Name ?: "",
@@ -105,6 +105,7 @@ fun AppHostScreen(
                         .padding(10.dp)
                         .fillMaxHeight(),
                     onNewGame = {
+                        viewModel.saveUnfinishedGameInfo()
                         navHostController.popBackStack(TicTaeToeRoutes.Start.name, false)
                     }
                 )

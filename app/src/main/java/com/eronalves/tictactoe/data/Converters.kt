@@ -16,12 +16,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun winnerToNumber(winner: Winner): Int? {
-        return winner.ordinal
+    fun winnerToNumber(winner: Winner?): Int? {
+        return winner?.ordinal
     }
 
     @TypeConverter
-    fun numberToWinner(number: Int): Winner {
-        return enumValues<Winner>()[number]
+    fun numberToWinner(number: Int?): Winner? {
+        if (number != null) return enumValues<Winner>()[number]
+        return null
     }
 }

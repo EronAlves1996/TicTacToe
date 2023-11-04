@@ -1,5 +1,6 @@
 package com.eronalves.tictactoe.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -257,6 +258,9 @@ fun GameScreen(
     val openRobotPlayingTime =
         globalUiState.isRobotEnabled && globalUiState.playerTime == PlayerTime.Player2 && globalUiState.winner == Winner.NoWinner
 
+    BackHandler {
+        viewModel.saveUnfinishedGameInfo()
+    }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween,
@@ -322,6 +326,7 @@ fun GameScreen(
         BottomControls(
             primaryButtonLabel = R.string.restart_game,
             primaryButtonOnClick = {
+                viewModel.saveUnfinishedGameInfo()
                 globalUiState.player1Name?.let {
                     globalUiState.player2Name?.let { it1 ->
                         viewModel.startGame(

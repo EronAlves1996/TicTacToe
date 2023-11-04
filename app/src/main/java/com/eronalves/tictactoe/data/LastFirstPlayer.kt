@@ -5,4 +5,4 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class LastFirstPlayer(@PrimaryKey val id: Int, @ColumnInfo("p_name") val name: String?)
+data class LastFirstPlayer(@PrimaryKey val id: Long, @ColumnInfo("p_name") val name: String?)

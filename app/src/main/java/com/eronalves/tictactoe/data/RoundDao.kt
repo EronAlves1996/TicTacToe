@@ -6,6 +6,6 @@ import androidx.room.Insert
 @Dao
 interface RoundDao {
     @Insert
-    fun insertAll(vararg rounds: Round)
+    fun create(round: Round): Long?
 
 }

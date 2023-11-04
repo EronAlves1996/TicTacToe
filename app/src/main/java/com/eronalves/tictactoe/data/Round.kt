@@ -14,10 +14,10 @@ enum class Winner {
 
 @Entity
 data class Round(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long?,
     @ColumnInfo(name = "table_size") val tableSize: Int?,
-    @ColumnInfo(name = "player_1_id") val player1Id: Int?,
-    @ColumnInfo(name = "player_2_id") val player2Id: Int?,
+    @ColumnInfo(name = "player_1_id") val player1Id: Long?,
+    @ColumnInfo(name = "player_2_id") val player2Id: Long?,
     @ColumnInfo(name = "winner") val winner: Winner?,
     @ColumnInfo(name = "completed_at") val completedAt: Date?
 )

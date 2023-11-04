@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eronalves.tictactoe.data.AppDatabase
 import com.eronalves.tictactoe.data.LastFirstPlayer
+import com.eronalves.tictactoe.data.Move
+import com.eronalves.tictactoe.data.Player
+import com.eronalves.tictactoe.data.Round
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Arrays
+import java.util.Date
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
@@ -40,6 +44,12 @@ data class GameState(
 class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
     private val _uiState = MutableStateFlow(GameState())
     private val lastFirstPlayerDao = db.lastFirstPlayerDao()
+    private val playerDao = db.playerDao()
+    private val roundDao = db.roundDao()
+    private val moveDao = db.moveDao()
+    private var round: Round? = Round(null, null, null, null, null, null)
+    private var moves: ArrayList<Move> = ArrayList()
+
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -57,6 +67,18 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
         isRobotEnabled: Boolean,
         tableSize: Int
     ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            round = Round(
+                null,
+                tableSize,
+                resolvePlayerId(player1Name),
+                resolvePlayerId(player2Name),
+                null,
+                null
+            )
+        }
+        moves = ArrayList()
+
         _uiState.update { currentState ->
             currentState.copy(
                 player1Name = player1Name,
@@ -86,12 +108,65 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
             it?.gameTable?.get(x)?.set(y, associatePlayerToCellSymbol(it.playerTime))
             val table = it.gameTable
             val hasWinner = checkIfGameEnded(table, it.tableSize)
+            moves.add(
+                Move(
+                    null, x, y, if (it.playerTime == PlayerTime.Player1) {
+                        round?.player1Id
+                    } else {
+                        round?.player2Id
+                    },
+                    null
+                )
+            )
+
+            if (hasWinner != Winner.NoWinner) {
+                saveEndedGameInformation()
+            }
 
             it.copy(
                 gameTable = table,
                 playerTime = swapPlaying(it.playerTime),
                 winner = hasWinner
             )
+        }
+    }
+
+    fun saveUnfinishedGameInfo() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.collect {
+                val roundId = roundDao.create(round!!)
+                val savedMoves = moves.map { move -> move.copy(roundId = roundId) }
+                moveDao.insertAll(*savedMoves.map { m -> m }.toTypedArray())
+            }
+        }
+
+    }
+
+    private suspend fun resolvePlayerId(name: String): Long? {
+        val player = playerDao.findByName(name)
+
+        if (player != null) return player.id
+
+        return playerDao.create(Player(id = null, name = name))
+    }
+
+    private fun saveEndedGameInformation() {
+        viewModelScope.launch(Dispatchers.IO) {
+            uiState.collect {
+                val savedRound = round?.copy(
+                    winner = when (it.winner) {
+                        Winner.Match -> com.eronalves.tictactoe.data.Winner.Match
+                        Winner.Player1 -> com.eronalves.tictactoe.data.Winner.Player1
+                        else -> com.eronalves.tictactoe.data.Winner.Player2
+                    },
+                    completedAt = Date()
+                )
+                val roundId = roundDao.create(savedRound!!)
+                val savedMoves =
+                    moves.stream().map { move -> move.copy(roundId = roundId) }
+                        .collect(Collectors.toList())
+                moveDao.insertAll(*savedMoves.map { item -> item }.toTypedArray())
+            }
         }
     }
 

@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Player(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long?,
     @ColumnInfo(name = "name") val name: String?
 )
