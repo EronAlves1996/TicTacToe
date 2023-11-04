@@ -23,7 +23,7 @@ Cada uma dessas telas foi desenvolvida conforme requisito apresentado.
 
 ### Tela Inicial
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_claro.jpeg)
+<img src="./tema_claro.jpeg" width="251" /><br>
 
 Tela simples de apresentação do jogo, contendo:
 
@@ -36,7 +36,7 @@ Tela simples de apresentação do jogo, contendo:
 
 ### Tela de Game
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tela_game.jpeg =251x497)
+<img src="./tela_game.jpeg" width="251" /><br>
 
 Tela onde ocorre a ação do Jogo. Contém:
 
@@ -47,7 +47,7 @@ Tela onde ocorre a ação do Jogo. Contém:
 
 ### Tela de Histórico
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tela_historico.png =251x497)
+<img src="./tela_historico.png" width="251" /><br>
 
 Tela onde mostra o histórico de partidas, da partida jogada mais recentemente para a mais antiga.
 Contém:
@@ -62,10 +62,10 @@ A tematização foi feita em Material Design, que já vem incluído no Jetpack C
 proveito do ajuste automático entre esquema de cores para tema claro e escuro. Sendo assim, a
 aplicação apresenta-se com estes dois temas que se ativam conforme esquema de cores do smartphone.
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_claro.jpeg =251x497)
+<img src="./tema_claro.jpeg" width="251" /><br>
 _Tema Claro_
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_escuro.jpeg =251x497)
+<img src="./tema_escuro.jpeg" width="251" /><br>
 _Tema Escuro_
 
 ## Persistência
