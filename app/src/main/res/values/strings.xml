@@ -18,4 +18,5 @@
     <string name="has_winner">E o vencedor é</string>
     <string name="robot_time_playing_popup_title">É a vez do robô fazer sua jogada</string>
     <string name="robot_time_playing_popup_content">O robô está analisando...</string>
+    <string name="history_screen_go_back">Voltar</string>
 </resources>

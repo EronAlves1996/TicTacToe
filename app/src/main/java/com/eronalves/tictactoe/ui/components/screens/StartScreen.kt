@@ -58,18 +58,6 @@ fun FormSection(
     }
 }
 
-@Composable
-fun NormalizedSegmentedControl(
-    options: List<String>, onItemSelection: (Int) -> Unit, modifier: Modifier = Modifier
-) {
-    SegmentedControl(
-        items = options,
-        onItemSelection = onItemSelection,
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        contrastColor = MaterialTheme.colorScheme.onSecondaryContainer,
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartScreen(

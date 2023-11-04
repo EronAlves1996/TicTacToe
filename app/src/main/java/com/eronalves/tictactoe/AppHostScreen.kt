@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eronalves.tictactoe.data.AppDatabase
 import com.eronalves.tictactoe.data.LastFirstPlayer
 import com.eronalves.tictactoe.ui.components.GameScreen
+import com.eronalves.tictactoe.ui.components.screens.HistoryScreen
 import com.eronalves.tictactoe.ui.components.viewmodel.Winner
 import kotlinx.coroutines.launch
 
@@ -110,7 +111,13 @@ fun AppHostScreen(
                     }
                 )
             }
-            composable(TicTaeToeRoutes.GameHistory.name) {}
+            composable(TicTaeToeRoutes.GameHistory.name) {
+                HistoryScreen(viewModel = viewModel, onClickBack = {
+                    navHostController.popBackStack(TicTaeToeRoutes.Start.name, false)
+                }, modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxHeight())
+            }
         }
     }
 }

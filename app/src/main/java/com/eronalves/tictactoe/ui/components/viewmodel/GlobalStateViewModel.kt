@@ -1,5 +1,7 @@
 package com.eronalves.tictactoe.ui.components.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eronalves.tictactoe.data.AppDatabase
@@ -7,9 +9,11 @@ import com.eronalves.tictactoe.data.LastFirstPlayer
 import com.eronalves.tictactoe.data.Move
 import com.eronalves.tictactoe.data.Player
 import com.eronalves.tictactoe.data.Round
+import com.eronalves.tictactoe.data.RoundAndPlayers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,6 +21,8 @@ import java.util.Arrays
 import java.util.Date
 import java.util.stream.Collectors
 import java.util.stream.IntStream
+import kotlin.math.ceil
+import kotlin.streams.toList
 
 enum class CellStates {
     Empty, X, O
@@ -40,6 +46,11 @@ data class GameState(
     val winner: Winner = Winner.NoWinner
 )
 
+data class RoundListInfo(
+    val itemCount: List<Int>? = null,
+    val roundList: List<RoundAndPlayers>? = null
+)
+
 
 class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
     private val _uiState = MutableStateFlow(GameState())
@@ -49,8 +60,10 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
     private val moveDao = db.moveDao()
     private var round: Round? = Round(null, null, null, null, null, null)
     private var moves: ArrayList<Move> = ArrayList()
+    private val _roundItemCountState = MutableStateFlow(RoundListInfo())
 
     val uiState = _uiState.asStateFlow()
+    val roundItemCountState = _roundItemCountState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,7 +87,7 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
                 resolvePlayerId(player1Name),
                 resolvePlayerId(player2Name),
                 null,
-                null
+                Date()
             )
         }
         moves = ArrayList()
@@ -104,6 +117,7 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
     }
 
     fun makePlay(x: Int, y: Int) {
+        var gameHasWinner = false
         _uiState.update {
             it?.gameTable?.get(x)?.set(y, associatePlayerToCellSymbol(it.playerTime))
             val table = it.gameTable
@@ -120,7 +134,7 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
             )
 
             if (hasWinner != Winner.NoWinner) {
-                saveEndedGameInformation()
+                gameHasWinner = true
             }
 
             it.copy(
@@ -129,17 +143,43 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
                 winner = hasWinner
             )
         }
+
+        if (gameHasWinner) saveEndedGameInformation()
     }
 
     fun saveUnfinishedGameInfo() {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.collect {
+            val state = _uiState.value
+            if (state.winner == Winner.NoWinner) {
                 val roundId = roundDao.create(round!!)
                 val savedMoves = moves.map { move -> move.copy(roundId = roundId) }
                 moveDao.insertAll(*savedMoves.map { m -> m }.toTypedArray())
             }
         }
 
+    }
+
+    fun getListedRoundPages() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val itemCount = roundDao.getItemCount()
+            val pageCount = ceil(itemCount / 6.0).toInt()
+
+            _roundItemCountState.update {
+                it.copy(itemCount = IntStream.range(1, pageCount + 1).toList())
+            }
+        }
+    }
+
+    fun getHistoryPaginatedFrom(start: Int) {
+        val translatedStart = start * 6
+        viewModelScope.launch(Dispatchers.IO) {
+            val listedItems = roundDao.getPaginatedFrom(translatedStart)
+            _roundItemCountState.update {
+                it.copy(
+                    roundList = listedItems
+                )
+            }
+        }
     }
 
     private suspend fun resolvePlayerId(name: String): Long? {
@@ -152,14 +192,14 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
 
     private fun saveEndedGameInformation() {
         viewModelScope.launch(Dispatchers.IO) {
-            uiState.collect {
+            val state = _uiState.value
+            if (state.winner != Winner.NoWinner) {
                 val savedRound = round?.copy(
-                    winner = when (it.winner) {
+                    winner = when (state.winner) {
                         Winner.Match -> com.eronalves.tictactoe.data.Winner.Match
                         Winner.Player1 -> com.eronalves.tictactoe.data.Winner.Player1
                         else -> com.eronalves.tictactoe.data.Winner.Player2
                     },
-                    completedAt = Date()
                 )
                 val roundId = roundDao.create(savedRound!!)
                 val savedMoves =
@@ -169,6 +209,7 @@ class GlobalStateViewModel(db: AppDatabase) : ViewModel() {
             }
         }
     }
+
 
     suspend fun makeRobotPlay() {
         uiState.collect { state ->

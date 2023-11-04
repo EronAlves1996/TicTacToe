@@ -19,11 +19,11 @@ data class Round(
     @ColumnInfo(name = "player_1_id") val player1Id: Long?,
     @ColumnInfo(name = "player_2_id") val player2Id: Long?,
     @ColumnInfo(name = "winner") val winner: Winner?,
-    @ColumnInfo(name = "completed_at") val completedAt: Date?
+    @ColumnInfo(name = "started_at") val startedAt: Date?
 )
 
 data class RoundAndPlayers(
     @Embedded val round: Round,
-    @Relation(parentColumn = "id", entityColumn = "player_1_id") val player1: Player?,
-    @Relation(parentColumn = "id", entityColumn = "player_2_id") val player2: Player?
+    @Relation(parentColumn = "player_1_id", entityColumn = "id") val player1: Player?,
+    @Relation(parentColumn = "player_2_id", entityColumn = "id") val player2: Player?
 )
