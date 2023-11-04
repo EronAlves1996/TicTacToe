@@ -36,7 +36,7 @@ Tela simples de apresentação do jogo, contendo:
 
 ### Tela de Game
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_game.jpeg)
+![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_game.png)
 
 Tela onde ocorre a ação do Jogo. Contém:
 
@@ -47,7 +47,7 @@ Tela onde ocorre a ação do Jogo. Contém:
 
 ### Tela de Histórico
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tela_historico.jpeg)
+![Screenshot_2023-11-04-03-00-36_1280x720.png](./tela_historico.png)
 
 Tela onde mostra o histórico de partidas, da partida jogada mais recentemente para a mais antiga.
 Contém:
