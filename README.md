@@ -36,7 +36,7 @@ Tela simples de apresentação do jogo, contendo:
 
 ### Tela de Game
 
-![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_game.png)
+![Screenshot_2023-11-04-03-00-36_1280x720.png](./tema_game.jpeg)
 
 Tela onde ocorre a ação do Jogo. Contém:
 
